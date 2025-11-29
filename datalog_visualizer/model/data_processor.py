@@ -46,7 +46,6 @@ class DataProcessor:
             raw_map = row[COL_MAP]
             raw_afr = row[COL_AFR]
 
-            # Find indices of nearest grid points (Snapping)
             idx_x = (np.abs(self.np_x_ticks - raw_rpm)).argmin()
             idx_y = (np.abs(self.np_y_ticks - raw_map)).argmin()
 
@@ -86,21 +85,15 @@ class DataProcessor:
                 clabel = "Samples"
 
             elif view_mode == 'dev':
-                grid_rpm_val = X_TICKS[idx_x]
-                grid_map_val = Y_TICKS[idx_y]
-                print(f"grid_rpm_val {grid_rpm_val}")
-                print(f"grid_map_val {grid_map_val}")
-                # Fetch target and calculate difference
                 target = TARGET_AFR_MAP[idx_x][idx_y]
                 diff = avg_afr - target
 
                 val_to_plot = diff
                 text_to_show = f"{diff:+.1f}"
-                title = f"Deviation (Actual - Target) ({filters['temp']}, {filters['tps']})"
+                title = f"AFR Deviation Map (Actual - Target) ({filters['temp']}, {filters['tps']})"
                 cmap = 'bwr'
-                clabel = "Error (AFR)"
-                # Center the colormap around 0 for deviation
-                norm = mcolors.TwoSlopeNorm(vmin=-1.5, vcenter=0, vmax=1.5)
+                clabel = "AFR Deviation"
+                norm = mcolors.TwoSlopeNorm(vmin=-2.5, vcenter=0, vmax=2.5)
 
             value_matrix[idx_y, idx_x] = val_to_plot
             text_matrix[idx_y, idx_x] = text_to_show

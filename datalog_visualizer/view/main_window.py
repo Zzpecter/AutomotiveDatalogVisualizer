@@ -1,5 +1,6 @@
-import sys
+import os
 import pandas as pd
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout,
                              QHBoxLayout, QLabel, QComboBox, QPushButton,
                              QAction, QFileDialog, QMessageBox, QRadioButton, QButtonGroup)
@@ -16,11 +17,10 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 1200, 700)
         self.df = pd.DataFrame()
         self.processor = DataProcessor()
-
         self.initUI()
+        self.update_status_label(None)
 
     def initUI(self):
-        # --- Menu Bar ---
         menu_bar = self.menuBar()
         file_menu = menu_bar.addMenu('FILE')
         open_log_act = QAction('OPEN LOG', self)
@@ -34,6 +34,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         main_layout = QVBoxLayout(central_widget)
         controls_layout = QHBoxLayout()
+
+        self.status_label = QLabel()
+        self.status_label.setAlignment(Qt.AlignCenter)
+        main_layout.addWidget(self.status_label)
 
         self.combo_temp = self._create_combo_box("Temp:", ["ALL", "WARM", "COLD"], controls_layout)
         self.combo_tps = self._create_combo_box("TPS:", ["ALL", "CLOSED", ">0%", "WOT"], controls_layout)
@@ -79,6 +83,17 @@ class MainWindow(QMainWindow):
         layout.addWidget(combo)
         return combo
 
+    def update_status_label(self, file_name=None, row_count=None):
+        if file_name and row_count is not None:
+            text = f"Log File: {file_name} — {row_count:,} Rows"
+            style = "color: black; font-weight: bold; font-size: 14pt; padding: 5px;"
+        else:
+            text = "NO LOG FILE LOADED"
+            style = "color: red; font-weight: bold; font-size: 16pt; padding: 5px; border: 2px solid red;"
+
+        self.status_label.setText(text)
+        self.status_label.setStyleSheet(style)
+
     def get_view_mode(self):
         if self.radio_afr.isChecked(): return 'afr'
         if self.radio_hits.isChecked(): return 'hits'
@@ -92,8 +107,11 @@ class MainWindow(QMainWindow):
         if file_name:
             try:
                 self.df = pd.read_csv(file_name)
+                base_name = os.path.basename(file_name)
+                self.update_status_label(base_name, len(self.df))
                 QMessageBox.information(self, "Success", f"Loaded {len(self.df)} rows.")
             except Exception as e:
+                self.update_status_label(None)  # Revert to error state
                 QMessageBox.critical(self, "Error", f"Could not load file: {e}")
 
     def plot_data(self):
