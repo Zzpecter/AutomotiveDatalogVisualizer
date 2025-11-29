@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import colors as mcolors
 
 from datalog_visualizer.config.constants import (
-    X_TICKS, Y_TICKS, TARGET_AFR_MAP, COL_COOLANT, COL_TPS,
+    X_TICKS, Y_TICKS, COL_COOLANT, COL_TPS,
     COL_RPM, COL_MAP, COL_AFR
 )
 
@@ -56,7 +56,7 @@ class DataProcessor:
 
         return grid_data
 
-    def calculate_view_matrix(self, grid_data: dict, view_mode: str, filters: dict) -> tuple:
+    def calculate_view_matrix(self, grid_data: dict, view_mode: str, filters: dict, target_map: dict) -> tuple:
         value_matrix = np.full(self.matrix_shape, np.nan)
         text_matrix = np.full(self.matrix_shape, "", dtype=object)
 
@@ -85,15 +85,17 @@ class DataProcessor:
                 clabel = "Samples"
 
             elif view_mode == 'dev':
-                target = TARGET_AFR_MAP[idx_x][idx_y]
+                grid_rpm_val = X_TICKS[idx_x]
+                grid_map_val = Y_TICKS[idx_y]
+                target = target_map.get((grid_rpm_val, grid_map_val), 14.7)
                 diff = avg_afr - target
 
                 val_to_plot = diff
                 text_to_show = f"{diff:+.1f}"
-                title = f"AFR Deviation Map (Actual - Target) ({filters['temp']}, {filters['tps']})"
+                title = f"Deviation (Actual - Target) ({filters['temp']}, {filters['tps']})"
                 cmap = 'bwr'
-                clabel = "AFR Deviation"
-                norm = mcolors.TwoSlopeNorm(vmin=-2.5, vcenter=0, vmax=2.5)
+                clabel = "Error (AFR)"
+                norm = mcolors.TwoSlopeNorm(vmin=-5, vcenter=0, vmax=5)
 
             value_matrix[idx_y, idx_x] = val_to_plot
             text_matrix[idx_y, idx_x] = text_to_show
