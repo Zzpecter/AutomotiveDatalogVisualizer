@@ -1,3 +1,4 @@
+from PyQt5.QtGui import QColor, QBrush
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTableWidget,
                              QTableWidgetItem, QPushButton, QHeaderView, QMessageBox)
 from PyQt5.QtCore import Qt
@@ -43,6 +44,34 @@ class TargetMapTab(QWidget):
 
         layout.addLayout(btn_layout)
 
+    def _color_cell(self, value):
+        stops = [
+            (9.0, 0, 32, 255),
+            (10.8, 0, 128, 255),
+            (11.8, 0, 255, 128),
+            (12.5, 128, 255, 0),
+            (13.62, 255, 128, 0),
+            (14.0, 255, 0, 0)
+        ]
+        value = max(9.0, min(16.0, value))
+
+        for i in range(len(stops) - 1):
+            afr1, r1, g1, b1 = stops[i]
+            afr2, r2, g2, b2 = stops[i + 1]
+            if afr1 <= value <= afr2:
+                ratio = (value - afr1) / (afr2 - afr1)
+                r = int(r1 + (r2 - r1) * ratio)
+                g = int(g1 + (g2 - g1) * ratio)
+                b = int(b1 + (b2 - b1) * ratio)
+                return QColor(r, g, b)
+            elif afr2 <= value <= afr1:
+                ratio = (afr1 - value) / (afr1 - afr2)
+                r = int(r2 + (r1 - r2) * ratio)
+                g = int(g2 + (g1 - g2) * ratio)
+                b = int(b2 + (b1 - b2) * ratio)
+                return QColor(r, g, b)
+        return QColor(0, 0, 0)
+
     def populate_table(self, map_data):
         self.table.blockSignals(True)
         for r, y_val in enumerate(Y_TICKS):
@@ -50,6 +79,14 @@ class TargetMapTab(QWidget):
                 val = map_data.get((x_val, y_val), -1)
                 item = QTableWidgetItem(f"{val:.1f}")
                 item.setTextAlignment(Qt.AlignCenter)
+
+                color = self._color_cell(val)
+                item.setBackground(QBrush(color))
+                if val > 15.0 or val < 11.0:
+                    item.setForeground(QBrush(QColor(255, 255, 255)))
+                else:
+                    item.setForeground(QBrush(QColor(0, 0, 0)))
+
                 self.table.setItem(r, c, item)
         self.table.blockSignals(False)
 
