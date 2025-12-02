@@ -1,104 +1,68 @@
-import os
+import json
 import pandas as pd
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout,
-                             QHBoxLayout, QLabel, QComboBox, QPushButton,
-                             QAction, QFileDialog, QMessageBox, QRadioButton, QButtonGroup)
+import os
+from PyQt5.QtWidgets import (QMainWindow, QAction, QFileDialog,
+                             QMessageBox, QTabWidget)
 
-from datalog_visualizer.view.plot_canvas import PlotCanvas
-from datalog_visualizer.model.data_processor import DataProcessor
+from datalog_visualizer.config.constants import TARGET_AFR_JSON_PATH
+from datalog_visualizer.view.tabs.visualizer_tab import VisualizerTab
+from datalog_visualizer.view.tabs.target_map_tab import TargetMapTab
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
         self.setWindowTitle("ME442 Log Visualizer - Zzpecter's GT Turbo")
-        self.setGeometry(100, 100, 1200, 700)
+        self.setGeometry(100, 100, 1200, 800)
+
         self.df = pd.DataFrame()
-        self.processor = DataProcessor()
+        self.target_afr_map = self.load_target_map_from_file()
+
         self.initUI()
-        self.update_status_label(None)
+
+    def load_target_map_from_file(self):
+        map_data = {}
+        with open(TARGET_AFR_JSON_PATH, 'r') as f:
+            raw_map = json.load(f)
+            for key_str, afr in raw_map.items():
+                rpm, map_val = map(int, key_str.split(','))
+                map_data[(rpm, map_val)] = afr
+        return map_data
+
+    def save_target_map_to_file(self, map_data):
+        json_ready_map = {}
+        for (rpm, map_val), afr in map_data.items():
+            key_str = f"{rpm},{map_val}"
+            json_ready_map[key_str] = afr
+
+        with open(TARGET_AFR_JSON_PATH, 'w') as f:
+            json.dump(json_ready_map, f, indent=4)
+        return True
 
     def initUI(self):
-        menu_bar = self.menuBar()
-        file_menu = menu_bar.addMenu('FILE')
+        menubar = self.menuBar()
+        file_menu = menubar.addMenu('FILE')
         open_log_act = QAction('OPEN LOG', self)
         open_log_act.triggered.connect(self.open_log_file)
         save_plot_act = QAction('SAVE PLOT', self)
-        save_plot_act.triggered.connect(self.save_plot)
+        save_plot_act.triggered.connect(self.save_current_plot)
         file_menu.addAction(open_log_act)
         file_menu.addAction(save_plot_act)
 
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        main_layout = QVBoxLayout(central_widget)
-        controls_layout = QHBoxLayout()
+        self.tabs = QTabWidget()
+        self.setCentralWidget(self.tabs)
 
-        self.status_label = QLabel()
-        self.status_label.setAlignment(Qt.AlignCenter)
-        main_layout.addWidget(self.status_label)
+        self.tab_visualizer = VisualizerTab(self)
+        self.tab_targets = TargetMapTab(self)
 
-        self.combo_temp = self._create_combo_box("Temp:", ["ALL", "WARM", "COLD"], controls_layout)
-        self.combo_tps = self._create_combo_box("TPS:", ["ALL", "CLOSED", ">0%", "WOT"], controls_layout)
+        self.tabs.addTab(self.tab_visualizer, "AFR Visualizer")
+        self.tabs.addTab(self.tab_targets, "AFR Target Map")
 
-        lbl_view = QLabel("View Mode:")
-        lbl_view.setStyleSheet("font-weight: bold; margin-left: 20px;")
+    def get_target_map(self):
+        return self.target_afr_map
 
-        self.radio_afr = QRadioButton("Avg AFR")
-        self.radio_afr.setChecked(True)
-        self.radio_hits = QRadioButton("Hit Count")
-        self.radio_dev = QRadioButton("Deviation")
-        self.view_group = QButtonGroup(self)
-        self.view_group.addButton(self.radio_afr)
-        self.view_group.addButton(self.radio_hits)
-        self.view_group.addButton(self.radio_dev)
-
-        controls_layout.addWidget(lbl_view)
-        controls_layout.addWidget(self.radio_afr)
-        controls_layout.addWidget(self.radio_hits)
-        controls_layout.addWidget(self.radio_dev)
-
-        controls_layout.addSpacing(30)
-        self.btn_plot = QPushButton("PLOT")
-        self.btn_plot.clicked.connect(self.plot_data)
-        self.btn_reset = QPushButton("RESET")
-        self.btn_reset.clicked.connect(self.reset_canvas)
-        controls_layout.addWidget(self.btn_plot)
-        controls_layout.addWidget(self.btn_reset)
-        controls_layout.addStretch()
-
-        self.canvas = PlotCanvas(self)
-        main_layout.addLayout(controls_layout)
-        main_layout.addWidget(self.canvas)
-
-    def _create_combo_box(self, label_text, items, layout):
-        lbl = QLabel(label_text)
-        lbl.setStyleSheet("font-weight: bold; margin-left: 10px;")
-        combo = QComboBox()
-        combo.addItems(items)
-        combo.setFixedWidth(80)
-
-        layout.addWidget(lbl)
-        layout.addWidget(combo)
-        return combo
-
-    def update_status_label(self, file_name=None, row_count=None):
-        if file_name and row_count is not None:
-            text = f"Log File: {file_name} — {row_count:,} Rows"
-            style = "color: black; font-weight: bold; font-size: 14pt; padding: 5px;"
-        else:
-            text = "NO LOG FILE LOADED"
-            style = "color: red; font-weight: bold; font-size: 16pt; padding: 5px; border: 2px solid red;"
-
-        self.status_label.setText(text)
-        self.status_label.setStyleSheet(style)
-
-    def get_view_mode(self):
-        if self.radio_afr.isChecked(): return 'afr'
-        if self.radio_hits.isChecked(): return 'hits'
-        if self.radio_dev.isChecked(): return 'dev'
-        return 'afr'
+    def set_target_map(self, new_map):
+        self.target_afr_map = new_map
 
     def open_log_file(self):
         options = QFileDialog.Options()
@@ -108,42 +72,13 @@ class MainWindow(QMainWindow):
             try:
                 self.df = pd.read_csv(file_name)
                 base_name = os.path.basename(file_name)
-                self.update_status_label(base_name, len(self.df))
+                self.tab_visualizer.update_status_label(base_name, len(self.df))
+
                 QMessageBox.information(self, "Success", f"Loaded {len(self.df)} rows.")
             except Exception as e:
-                self.update_status_label(None)  # Revert to error state
                 QMessageBox.critical(self, "Error", f"Could not load file: {e}")
+                self.tab_visualizer.update_status_label(None)
 
-    def plot_data(self):
-        if self.df.empty:
-            QMessageBox.information(self, "Info", "Please OPEN LOG first.")
-            return
-
-        temp_sel = self.combo_temp.currentText()
-        tps_sel = self.combo_tps.currentText()
-        view_mode = self.get_view_mode()
-
-        filtered_df = self.processor.apply_filters(self.df, temp_sel, tps_sel)
-
-        if filtered_df.empty:
-            QMessageBox.information(self, "Info", "No data matches current filters.")
-            self.canvas.draw_empty_grid()
-            return
-
-        grid_data = self.processor.process_to_grid(filtered_df)
-
-        filters = {'temp': temp_sel, 'tps': tps_sel}
-
-        value_matrix, text_matrix, title, cmap, norm, clabel = \
-            self.processor.calculate_view_matrix(grid_data, view_mode, filters)
-
-        self.canvas.draw_heatmap(value_matrix, text_matrix, title, cmap, norm, clabel)
-
-    def reset_canvas(self):
-        self.canvas.draw_empty_grid()
-
-    def save_plot(self):
-        options = QFileDialog.Options()
-        filename, _ = QFileDialog.getSaveFileName(self, "Save Plot", "", "PNG Files (*.png)", options=options)
-        if filename:
-            self.canvas.figure.savefig(filename)
+    def save_current_plot(self):
+        self.tab_visualizer.canvas.figure.savefig("plot_output.png")
+        QMessageBox.information(self, "Saved", "Plot saved as plot_output.png")
