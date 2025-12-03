@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import (QMainWindow, QAction, QFileDialog,
 from datalog_visualizer.config.constants import TARGET_AFR_JSON_PATH
 from datalog_visualizer.view.tabs.visualizer_tab import VisualizerTab
 from datalog_visualizer.view.tabs.target_map_tab import TargetMapTab
+from datalog_visualizer.view.tabs.danger_cfg_tab import DangerCfgTab
 
 
 class MainWindow(QMainWindow):
@@ -54,9 +55,11 @@ class MainWindow(QMainWindow):
 
         self.tab_visualizer = VisualizerTab(self)
         self.tab_targets = TargetMapTab(self)
+        self.tab_danger = DangerCfgTab()
 
         self.tabs.addTab(self.tab_visualizer, "AFR Visualizer")
         self.tabs.addTab(self.tab_targets, "AFR Target Map")
+        self.tabs.addTab(self.tab_danger, "Danger Detection Cfg.")
 
     def get_target_map(self):
         return self.target_afr_map
