@@ -9,10 +9,22 @@ from datalog_visualizer.config.constants import CONFIG_PATH, CONDITIONS_DICT
 
 
 class DangerCfgTab(QWidget):
-    def __init__(self):
+    def __init__(self, main_window_ref):
         super().__init__()
+        self.main_window = main_window_ref
         self.sensor_data = []
-        self.current_signal_index = -1
+
+        self.combo_filter = QComboBox()
+        self.main_table = QTableWidget()
+        self.combo_type = QComboBox()
+        self.combo_condition = QComboBox()
+        self.btn_create_alert = QPushButton("Create Alert")
+        self.btn_update_alert = QPushButton("Update Alert")
+        self.btn_remove_alert = QPushButton("Remove Alert")
+        self.inp_value = QLineEdit()
+        self.btn_save_json = QPushButton("SAVE")
+        self.table_alerts = QTableWidget()
+
         self.initUI()
         self.load_config()
 
@@ -25,14 +37,12 @@ class DangerCfgTab(QWidget):
 
         filter_layout = QHBoxLayout()
         lbl_filter = QLabel("Filter Signals:")
-        self.combo_filter = QComboBox()
         self.combo_filter.addItems(["ALL", "WARNING", "CRITICAL"])
         self.combo_filter.currentTextChanged.connect(self.populate_main_table)
         filter_layout.addWidget(lbl_filter)
         filter_layout.addWidget(self.combo_filter)
         filter_layout.addStretch()
 
-        self.main_table = QTableWidget()
         self.main_table.setColumnCount(7)
         self.main_table.setHorizontalHeaderLabels(["Signal", "Data Type", "Category", "Importance", "Range", "Warning", "Critical"])
         self.main_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -47,10 +57,8 @@ class DangerCfgTab(QWidget):
         crud_group = QGroupBox("Edit Selected Signal Rule")
         crud_layout = QFormLayout()
 
-        self.combo_type = QComboBox()
         self.combo_type.addItems(["WARNING", "CRITICAL"])
         self.combo_type.setFixedWidth(120)
-        self.combo_condition = QComboBox()
         self.combo_condition.addItems([
                 "EQUAL",
                 "NOT EQUAL",
@@ -60,28 +68,19 @@ class DangerCfgTab(QWidget):
                 "GREATER THAN"])
         self.combo_condition.setFixedWidth(240)
 
-        self.inp_value = QLineEdit()
         crud_layout.addRow("Type:", self.combo_type)
         crud_layout.addRow("Condition:", self.combo_condition)
         crud_layout.addRow("Value:", self.inp_value)
 
         btn_layout = QHBoxLayout()
-        self.btn_set_warn = QPushButton("Set Warning")
-        self.btn_set_warn.clicked.connect(lambda: self.update_rule('warning'))
-        self.btn_set_crit = QPushButton("Set Critical")
-        self.btn_set_crit.clicked.connect(lambda: self.update_rule('critical'))
-        self.btn_clear_warn = QPushButton("Clear Warn")
-        self.btn_clear_warn.setStyleSheet("color: orange;")
-        self.btn_clear_warn.clicked.connect(lambda: self.clear_rule('warning'))
-        self.btn_clear_crit = QPushButton("Clear Crit")
-        self.btn_clear_crit.setStyleSheet("color: red;")
-        self.btn_clear_crit.clicked.connect(lambda: self.clear_rule('critical'))
-        btn_layout.addWidget(self.btn_set_warn)
-        btn_layout.addWidget(self.btn_set_crit)
-        btn_layout.addWidget(self.btn_clear_warn)
-        btn_layout.addWidget(self.btn_clear_crit)
+        self.btn_create_alert.clicked.connect(self.create_alert)
+        self.btn_update_alert.clicked.connect(self.update_alert)
+        self.btn_remove_alert.clicked.connect(self.remove_alert)
+        self.btn_remove_alert.setStyleSheet("color: red;")
+        btn_layout.addWidget(self.btn_create_alert)
+        btn_layout.addWidget(self.btn_update_alert)
+        btn_layout.addWidget(self.btn_remove_alert)
         crud_layout.addRow(btn_layout)
-        self.btn_save_json = QPushButton("SAVE CONFIGURATION TO FILE")
         self.btn_save_json.setFixedHeight(40)
         self.btn_save_json.setStyleSheet("background-color: #4CAF50; color: white; font-weight: bold;")
         self.btn_save_json.clicked.connect(self.save_config)
@@ -91,7 +90,6 @@ class DangerCfgTab(QWidget):
         tables_group = QGroupBox("Current Rules")
         tables_layout = QHBoxLayout()
 
-        self.table_alerts = QTableWidget()
         self.table_alerts.setColumnCount(3)
         self.table_alerts.setHorizontalHeaderLabels(["Type", "Condition", "Value"])
         self.table_alerts.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -112,9 +110,6 @@ class DangerCfgTab(QWidget):
         splitter.setStretchFactor(1, 1)
 
         main_layout.addWidget(splitter)
-
-    def _create_combo_box(self, items, layout):
-        return combo
 
     def load_config(self):
         try:
@@ -217,37 +212,39 @@ class DangerCfgTab(QWidget):
             "value": parse_num(self.inp_value.text())
         }
 
-    # TODO: functions below!
-    def update_rule(self, rule_key):
-        if self.current_signal_index < 0:
-            QMessageBox.warning(self, "Warning", "No signal selected.")
+    def create_alert(self, signal):
+        if signal not in self.sensor_data.keys:
             return
-
         data = self.get_input_data()
-        if not data['type']:
-            QMessageBox.warning(self, "Warning", "Type is required.")
+        if not data['value'] or data['value'] == '':
+            QMessageBox.warning(self, "Warning", "value is required.")
             return
 
-        # Update Memory
-        self.sensor_data[self.current_signal_index][rule_key] = data
+        self.sensor_data[signal]['alerts'].append(data)
+        self.refresh_alerts_table(self.sensor_data[signal])
+        self.main_window.edited = True
 
-        # Refresh UI
-        self.populate_main_table()
-        # Reselect the row to update bottom view
-        # (This is a bit tricky with re-populating, simplistic approach below)
-        self.refresh_alerts_table(self.sensor_data[self.current_signal_index])
+    def update_alert(self, signal):
+        if signal not in self.sensor_data.keys:
+            return
+        data = self.get_input_data()
+        if not data['value'] or data['value'] == '':
+            QMessageBox.warning(self, "Warning", "value is required.")
+            return
 
-    def clear_rule(self, rule_key):
-        if self.current_signal_index < 0: return
-        self.sensor_data[self.current_signal_index][rule_key] = None
-        self.populate_main_table()
-        self.refresh_alerts_table(self.sensor_data[self.current_signal_index])
+        idx = self.table_alerts.selectedItems()[0].row()
+        self.sensor_data[signal]['alerts'][idx] = data
+        self.refresh_alerts_table(self.sensor_data[signal])
+        self.main_window.edited = True
+
+    def delete_alert(self, signal):
+        idx = self.table_alerts.selectedItems()[0].row()
+        self.sensor_data[signal]['alerts'].pop(idx)
+        self.refresh_alerts_table(self.sensor_data[signal])
+        self.main_window.edited = True
 
     def save_config(self):
-        try:
-            os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
-            with open(CONFIG_PATH, 'w') as f:
-                json.dump(self.sensor_data, f, indent=4)
-            QMessageBox.information(self, "Success", "Configuration saved successfully.")
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"Could not save file: {e}")
+        with open(CONFIG_PATH, 'w') as f:
+            json.dump(self.sensor_data, f, indent=4)
+        QMessageBox.information(self, "Success", "Configuration saved successfully.")
+        self.main_window.edited = False
