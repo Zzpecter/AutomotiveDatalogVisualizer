@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
         self.tabs = QTabWidget()
         self.tab_visualizer = VisualizerTab(self)
         self.tab_targets = TargetMapTab(self)
-        self.tab_danger = DangerCfgTab()
+        self.tab_danger = DangerCfgTab(self)
 
         self.tabs.tabBar().installEventFilter(self)
         self.previous_index = self.tabs.currentIndex()

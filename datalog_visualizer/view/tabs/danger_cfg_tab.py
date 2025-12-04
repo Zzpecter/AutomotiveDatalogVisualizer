@@ -75,7 +75,7 @@ class DangerCfgTab(QWidget):
         btn_layout = QHBoxLayout()
         self.btn_create_alert.clicked.connect(self.create_alert)
         self.btn_update_alert.clicked.connect(self.update_alert)
-        self.btn_remove_alert.clicked.connect(self.remove_alert)
+        self.btn_remove_alert.clicked.connect(self.delete_alert)
         self.btn_remove_alert.setStyleSheet("color: red;")
         btn_layout.addWidget(self.btn_create_alert)
         btn_layout.addWidget(self.btn_update_alert)
