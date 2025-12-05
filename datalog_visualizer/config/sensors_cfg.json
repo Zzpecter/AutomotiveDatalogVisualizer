@@ -1,7 +1,7 @@
 {
     "Time": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "datetime",
         "importance": 1,
         "range": [
             0,
@@ -10,8 +10,8 @@
         "alerts": []
     },
     "  RPM": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -22,8 +22,8 @@
         ]
     },
     "  Sync status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -32,8 +32,8 @@
         "alerts": []
     },
     "  Lost sync count": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -43,7 +43,7 @@
     },
     "  Injector duty": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -53,7 +53,7 @@
     },
     "  MAP": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -63,7 +63,7 @@
     },
     "  TPS": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -73,7 +73,7 @@
     },
     "  Primary Load": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -83,7 +83,7 @@
     },
     "  Secondary Load": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -93,7 +93,7 @@
     },
     "  Coolant Temp.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "temp",
         "importance": 1,
         "range": [
             0,
@@ -103,7 +103,7 @@
     },
     "  Intake Air Temp.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "temp",
         "importance": 1,
         "range": [
             0,
@@ -113,7 +113,7 @@
     },
     "  Battery Voltage": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -123,27 +123,7 @@
     },
     "  AE Delta": {
         "data_type": "float",
-        "category": "TBD",
-        "importance": 1,
-        "range": [
-            0,
-            0
-        ],
-        "alerts": []
-    },
-    "  Airflow Est.": {
-        "data_type": "float",
-        "category": "TBD",
-        "importance": 1,
-        "range": [
-            0,
-            0
-        ],
-        "alerts": []
-    },
-    "  Fuelfow Est.": {
-        "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -152,8 +132,8 @@
         "alerts": []
     },
     "  LC Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -162,8 +142,8 @@
         "alerts": []
     },
     "  ALS Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -172,8 +152,8 @@
         "alerts": []
     },
     "  Clutch SW Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -182,8 +162,8 @@
         "alerts": []
     },
     "  CAM A Sync Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -193,7 +173,7 @@
     },
     "  Start. Inj. Crank Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -203,7 +183,7 @@
     },
     "  Start. Inj. ASE Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -213,7 +193,7 @@
     },
     "  Start. Inj. ASE Decay Time": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -223,7 +203,7 @@
     },
     "  AE RPM Clamp Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -233,7 +213,7 @@
     },
     "  AE VE Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -243,7 +223,7 @@
     },
     "  AE Captured Delta": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -253,7 +233,7 @@
     },
     "  Lim. Table RPM": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -263,7 +243,7 @@
     },
     "  Lim. Ign. Cut Perc.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -273,7 +253,7 @@
     },
     "  Lim. Inj. Cut Perc.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -282,8 +262,8 @@
         "alerts": []
     },
     "  Extra Idle Load SW Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -293,7 +273,7 @@
     },
     "  Boost OL Duty": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -303,7 +283,7 @@
     },
     "  Boost CL Init Duty": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -312,8 +292,8 @@
         "alerts": []
     },
     "  Boost Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -323,7 +303,7 @@
     },
     "  Boost Final Duty": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -333,7 +313,7 @@
     },
     "  Boost P Comp.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -343,7 +323,7 @@
     },
     "  Boost I Comp.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -353,7 +333,7 @@
     },
     "  Boost D Comp.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -362,8 +342,8 @@
         "alerts": []
     },
     "  Overrun Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -373,7 +353,7 @@
     },
     "  Ign. Dwell Base Out": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -383,7 +363,7 @@
     },
     "  Ign. Adv. Base Out.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -393,7 +373,7 @@
     },
     "  Ign. Adv. Spark Scatter Add": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -403,7 +383,7 @@
     },
     "  Ign. Adv. Add. Base Out.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -413,7 +393,7 @@
     },
     "  Ign. Adv. CLT Add": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -423,7 +403,7 @@
     },
     "  Ign. Adv. IAT Add": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -433,17 +413,7 @@
     },
     "  Inj. Pri. Start Angle": {
         "data_type": "float",
-        "category": "TBD",
-        "importance": 1,
-        "range": [
-            0,
-            0
-        ],
-        "alerts": []
-    },
-    "  Sec. Inj. Start Angle": {
-        "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -453,7 +423,7 @@
     },
     "  Inj. Target AFR": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -463,7 +433,7 @@
     },
     "  Inj. Base VE Out.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -473,7 +443,7 @@
     },
     "  Inj. VE Total": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -483,7 +453,7 @@
     },
     "  Inj. Base PW": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -493,7 +463,7 @@
     },
     "  Inj. CLT Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -503,7 +473,7 @@
     },
     "  Inj. IAT Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -513,7 +483,7 @@
     },
     "  Inj. Idle Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -523,7 +493,7 @@
     },
     "  Inj. Cranking Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -533,7 +503,7 @@
     },
     "  Inj. ASE Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -543,7 +513,7 @@
     },
     "  Inj. INT IAT Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -553,7 +523,7 @@
     },
     "  Ign. Adv. Sec. Load Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -563,7 +533,7 @@
     },
     "  Ign. Adv. Limiter Add": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -573,7 +543,7 @@
     },
     "  Ign. Adv. ALS Add": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -583,7 +553,7 @@
     },
     "  Inj. Add Base VE Out.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -593,7 +563,7 @@
     },
     "  Inj. AE VE Added": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -603,7 +573,7 @@
     },
     "  Inj. Sec. Load Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -613,7 +583,7 @@
     },
     "  Inj. Limiter Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -623,7 +593,7 @@
     },
     "  Inj. Lambda Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -633,7 +603,7 @@
     },
     "  Inj. Overrun Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -643,7 +613,7 @@
     },
     "  Inj. Dead Time": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -653,7 +623,7 @@
     },
     "  Inj. Angle Final": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -662,8 +632,8 @@
         "alerts": []
     },
     "  Inj. Max Duty Cnt.": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -672,8 +642,8 @@
         "alerts": []
     },
     "  Trigger - Filtered IRQs": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -682,8 +652,8 @@
         "alerts": []
     },
     "  Master Relay Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -692,8 +662,8 @@
         "alerts": []
     },
     "  Start. Inj. ASE Decay Time Left": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -703,7 +673,7 @@
     },
     "  Start. Inj. Priming Pulse": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -713,7 +683,7 @@
     },
     "  AE CLT Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -722,8 +692,8 @@
         "alerts": []
     },
     "  AE MAP Delta": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -732,8 +702,8 @@
         "alerts": []
     },
     "  AE TPS Delta": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -742,8 +712,8 @@
         "alerts": []
     },
     "  Lim. Hard RPM Curr.": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -752,8 +722,8 @@
         "alerts": []
     },
     "  Idle Ign. Adv. Spark Scatter": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -762,8 +732,8 @@
         "alerts": []
     },
     "  Idle OL Duty": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -772,8 +742,8 @@
         "alerts": []
     },
     "  Idle Target RPM": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -782,8 +752,8 @@
         "alerts": []
     },
     "  Idle Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -792,28 +762,28 @@
         "alerts": []
     },
     "  Idle PWM Duty": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
-            0
+            100
         ],
         "alerts": []
     },
     "  Idle Target RPM Err.": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "engine",
         "importance": 1,
         "range": [
-            0,
-            0
+            -2000,
+            2000
         ],
         "alerts": []
     },
     "  Idle P Comp.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -823,7 +793,7 @@
     },
     "  Idle I Comp.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -833,7 +803,7 @@
     },
     "  Idle D Comp.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -843,7 +813,7 @@
     },
     "  Boost Target MAP": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -853,7 +823,7 @@
     },
     "  Boost Target MAP Err.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -863,7 +833,7 @@
     },
     "  Lambda AFR Err. 1": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -873,7 +843,7 @@
     },
     "  Lambda AFR Err. 2": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -882,8 +852,8 @@
         "alerts": []
     },
     "  Lambda Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -893,7 +863,7 @@
     },
     "  Lambda Curr AFR 1": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -903,7 +873,7 @@
     },
     "  Lambda Ext. AFR": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -913,7 +883,7 @@
     },
     "  Lambda WB LTT Trim": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -922,8 +892,8 @@
         "alerts": []
     },
     "  Lambda LTT Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -933,7 +903,7 @@
     },
     "  Lambda LTT Conf. Lvl.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -943,37 +913,7 @@
     },
     "  Lambda LTT Store Tmr.": {
         "data_type": "float",
-        "category": "TBD",
-        "importance": 1,
-        "range": [
-            0,
-            0
-        ],
-        "alerts": []
-    },
-    "  Lambda Curr AFR 2": {
-        "data_type": "float",
-        "category": "TBD",
-        "importance": 1,
-        "range": [
-            0,
-            0
-        ],
-        "alerts": []
-    },
-    "  VSS Speed": {
-        "data_type": "float",
-        "category": "TBD",
-        "importance": 1,
-        "range": [
-            0,
-            0
-        ],
-        "alerts": []
-    },
-    "  VSS Calc. Speed": {
-        "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -982,8 +922,8 @@
         "alerts": []
     },
     "  Sel. Map Boost": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "racing",
         "importance": 1,
         "range": [
             0,
@@ -993,7 +933,7 @@
     },
     "  Ign. Adv. Final": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -1003,7 +943,7 @@
     },
     "  Ign. Dwell Final": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -1013,7 +953,7 @@
     },
     "  Inj. Pri. PW Final": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "fuel",
         "importance": 1,
         "range": [
             0,
@@ -1023,7 +963,7 @@
     },
     "  Crank IRQs": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -1033,27 +973,7 @@
     },
     "  Cam A IRQs": {
         "data_type": "float",
-        "category": "TBD",
-        "importance": 1,
-        "range": [
-            0,
-            0
-        ],
-        "alerts": []
-    },
-    "  Debug 1": {
-        "data_type": "float",
-        "category": "TBD",
-        "importance": 1,
-        "range": [
-            0,
-            0
-        ],
-        "alerts": []
-    },
-    "  GPT 2D 1 Inp. Link": {
-        "data_type": "float",
-        "category": "TBD",
+        "category": "engine",
         "importance": 1,
         "range": [
             0,
@@ -1062,8 +982,8 @@
         "alerts": []
     },
     "  Int. WB Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -1072,8 +992,8 @@
         "alerts": []
     },
     "  Int. WB Sensor Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -1083,7 +1003,7 @@
     },
     "  Int. WB HTR Drive": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -1093,7 +1013,7 @@
     },
     "  Int. WB HTR P Comp.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -1103,7 +1023,7 @@
     },
     "  Int. WB HTR I Comp.": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -1113,7 +1033,7 @@
     },
     "  Int. WB Lambda": {
         "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -1123,17 +1043,7 @@
     },
     "  Int. WB AFR": {
         "data_type": "float",
-        "category": "TBD",
-        "importance": 1,
-        "range": [
-            0,
-            0
-        ],
-        "alerts": []
-    },
-    "  CLT Out Delay": {
-        "data_type": "float",
-        "category": "TBD",
+        "category": "elec",
         "importance": 1,
         "range": [
             0,
@@ -1142,72 +1052,72 @@
         "alerts": []
     },
     "  RTC Status": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "bool",
+        "category": "datetime",
         "importance": 1,
         "range": [
             0,
-            0
+            1
         ],
         "alerts": []
     },
     "  RTC Day": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "datetime",
         "importance": 1,
         "range": [
-            0,
-            0
+            1,
+            31
         ],
         "alerts": []
     },
     "  RTC Month": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "datetime",
         "importance": 1,
         "range": [
-            0,
-            0
+            1,
+            12
         ],
         "alerts": []
     },
     "  RTC Year": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "datetime",
         "importance": 1,
         "range": [
-            0,
-            0
+            2000,
+            2200
         ],
         "alerts": []
     },
     "  RTC Hour": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "datetime",
         "importance": 1,
         "range": [
             0,
-            0
+            24
         ],
         "alerts": []
     },
     "  RTC Minutes": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "datetime",
         "importance": 1,
         "range": [
             0,
-            0
+            60
         ],
         "alerts": []
     },
     "  RTC Seconds": {
-        "data_type": "float",
-        "category": "TBD",
+        "data_type": "int",
+        "category": "datetime",
         "importance": 1,
         "range": [
             0,
-            0
+            60
         ],
         "alerts": []
     }
