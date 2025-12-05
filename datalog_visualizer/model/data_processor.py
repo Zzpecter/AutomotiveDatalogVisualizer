@@ -87,7 +87,7 @@ class DataProcessor:
             elif view_mode == 'dev':
                 grid_rpm_val = X_TICKS[idx_x]
                 grid_map_val = Y_TICKS[idx_y]
-                target = target_map.get((grid_rpm_val, grid_map_val), 14.7)
+                target = target_map.get((grid_rpm_val, grid_map_val), 13.6)
                 diff = avg_afr - target
 
                 val_to_plot = diff
