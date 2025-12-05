@@ -3,10 +3,12 @@ import pandas as pd
 import os
 from PyQt5.QtWidgets import (QMainWindow, QAction, QFileDialog,
                              QMessageBox, QTabWidget)
+from PyQt5.QtCore import QEvent
 
 from datalog_visualizer.config.constants import TARGET_AFR_JSON_PATH
 from datalog_visualizer.view.tabs.visualizer_tab import VisualizerTab
 from datalog_visualizer.view.tabs.target_map_tab import TargetMapTab
+from datalog_visualizer.view.tabs.danger_cfg_tab import DangerCfgTab
 
 
 class MainWindow(QMainWindow):
@@ -17,6 +19,15 @@ class MainWindow(QMainWindow):
 
         self.df = pd.DataFrame()
         self.target_afr_map = self.load_target_map_from_file()
+
+        self.tabs = QTabWidget()
+        self.tab_visualizer = VisualizerTab(self)
+        self.tab_targets = TargetMapTab(self)
+        self.tab_danger = DangerCfgTab(self)
+
+        self.tabs.tabBar().installEventFilter(self)
+        self.previous_index = self.tabs.currentIndex()
+        self.edited = False
 
         self.initUI()
 
@@ -40,8 +51,8 @@ class MainWindow(QMainWindow):
         return True
 
     def initUI(self):
-        menubar = self.menuBar()
-        file_menu = menubar.addMenu('FILE')
+        menu_bar = self.menuBar()
+        file_menu = menu_bar.addMenu('FILE')
         open_log_act = QAction('OPEN LOG', self)
         open_log_act.triggered.connect(self.open_log_file)
         save_plot_act = QAction('SAVE PLOT', self)
@@ -49,14 +60,28 @@ class MainWindow(QMainWindow):
         file_menu.addAction(open_log_act)
         file_menu.addAction(save_plot_act)
 
-        self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
-
-        self.tab_visualizer = VisualizerTab(self)
-        self.tab_targets = TargetMapTab(self)
 
         self.tabs.addTab(self.tab_visualizer, "AFR Visualizer")
         self.tabs.addTab(self.tab_targets, "AFR Target Map")
+        self.tabs.addTab(self.tab_danger, "Danger Detection Cfg.")
+
+    def eventFilter(self, source, event):
+        if event.type() == QEvent.Type.MouseButtonPress and source == self.tabs.tabBar():
+            clicked_index = self.tabs.tabBar().tabAt(event.pos())
+            if clicked_index != self.tabs.currentIndex():
+                if self.edited:
+                    reply = QMessageBox.question(self, 'Warning',
+                                                 'You have unsaved changes. Are you sure you want to leave this tab?',
+                                                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                                 QMessageBox.StandardButton.No)
+
+                    if reply == QMessageBox.StandardButton.No:
+                        return True
+                    else:
+                        self.edited = False
+                        return False
+        return super().eventFilter(source, event)
 
     def get_target_map(self):
         return self.target_afr_map

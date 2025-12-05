@@ -74,14 +74,14 @@ class DataProcessor:
                 val_to_plot = avg_afr
                 text_to_show = f"{avg_afr:.1f}"
                 title = f"Average AFR ({filters['temp']}, {filters['tps']})"
-                cmap = 'jet'
+                cmap = 'RdBu_r'
                 clabel = "AFR"
 
             elif view_mode == 'hits':
                 val_to_plot = len(afr_list)
                 text_to_show = str(val_to_plot)
                 title = f"Hit Count ({filters['temp']}, {filters['tps']})"
-                cmap = 'viridis'
+                cmap = 'jet'
                 clabel = "Samples"
 
             elif view_mode == 'dev':
@@ -93,7 +93,7 @@ class DataProcessor:
                 val_to_plot = diff
                 text_to_show = f"{diff:+.1f}"
                 title = f"Deviation (Actual - Target) ({filters['temp']}, {filters['tps']})"
-                cmap = 'bwr'
+                cmap = 'coolwarm'
                 clabel = "Error (AFR)"
                 norm = mcolors.TwoSlopeNorm(vmin=-5, vcenter=0, vmax=5)
 
