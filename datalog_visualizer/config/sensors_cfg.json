@@ -18,7 +18,16 @@
             0
         ],
         "alerts": [
-            {"type": "WARNING", "condition": "gt", "value": 7000}
+            {
+                "type": "WARNING",
+                "condition": "gt",
+                "value": 6200.0
+            },
+            {
+                "type": "CRITICAL",
+                "condition": "gt",
+                "value": 7000.0
+            }
         ]
     },
     " Sync status": {
@@ -49,7 +58,18 @@
             0,
             0
         ],
-        "alerts": []
+        "alerts": [
+            {
+                "type": "WARNING",
+                "condition": "gt",
+                "value": 90.0
+            },
+            {
+                "type": "CRITICAL",
+                "condition": "gt",
+                "value": 95.0
+            }
+        ]
     },
     " MAP": {
         "data_type": "float",
@@ -59,7 +79,23 @@
             0,
             0
         ],
-        "alerts": []
+        "alerts": [
+            {
+                "type": "WARNING",
+                "condition": "lt",
+                "value": 30.0
+            },
+            {
+                "type": "WARNING",
+                "condition": "gt",
+                "value": 160.0
+            },
+            {
+                "type": "CRITICAL",
+                "condition": "gt",
+                "value": 200.0
+            }
+        ]
     },
     " TPS": {
         "data_type": "float",
@@ -99,7 +135,18 @@
             0,
             0
         ],
-        "alerts": []
+        "alerts": [
+            {
+                "type": "WARNING",
+                "condition": "gt",
+                "value": 80.0
+            },
+            {
+                "type": "CRITICAL",
+                "condition": "gt",
+                "value": 95.0
+            }
+        ]
     },
     " Intake Air Temp.": {
         "data_type": "float",
@@ -119,7 +166,18 @@
             0,
             0
         ],
-        "alerts": []
+        "alerts": [
+            {
+                "type": "WARNING",
+                "condition": "lt",
+                "value": 10.0
+            },
+            {
+                "type": "CRITICAL",
+                "condition": "lt",
+                "value": 8.0
+            }
+        ]
     },
     " AE Delta": {
         "data_type": "float",
