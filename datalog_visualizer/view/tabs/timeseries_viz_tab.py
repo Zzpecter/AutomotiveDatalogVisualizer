@@ -4,11 +4,11 @@ import pandas as pd
 import numpy as np
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QListWidget,
                              QListWidgetItem, QPushButton, QLabel, QGroupBox,
-                             QRadioButton, QButtonGroup, QSlider, QCheckBox,
-                             QSplitter, QFrame, QDoubleSpinBox, QMessageBox, QFileDialog)
+                             QRadioButton, QButtonGroup, QSlider,
+                             QSplitter, QDoubleSpinBox, QMessageBox, QFileDialog)
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QColor, QBrush
-from datalog_visualizer.config.constants import CONFIG_PATH, CONDITIONS_DICT
+from PyQt5.QtGui import QColor
+from datalog_visualizer.config.constants import CONFIG_PATH
 import pyqtgraph as pg
 
 
@@ -51,7 +51,7 @@ class TimeSeriesVizTab(QWidget):
         main_layout = QVBoxLayout(self)
         upper_splitter = QSplitter(Qt.Horizontal)
 
-        self.plot_widget.setBackground('k')  # Black background
+        self.plot_widget.setBackground('k')
         self.plot_widget.showGrid(x=True, y=True, alpha=0.3)
         self.plot_widget.addLegend()
         self.plot_widget.setLabel('bottom', 'Time (s)')
@@ -119,7 +119,7 @@ class TimeSeriesVizTab(QWidget):
 
         speed_layout = QHBoxLayout()
         speed_layout.addWidget(QLabel("Speed:"))
-        self.slider_speed.setRange(5, 15)  # 0.5 to 1.5 scaled by 10
+        self.slider_speed.setRange(5, 15)
         self.slider_speed.setValue(10)
         self.slider_speed.valueChanged.connect(self.update_timer_speed)
         speed_layout.addWidget(self.slider_speed)
@@ -142,18 +142,15 @@ class TimeSeriesVizTab(QWidget):
         main_layout.addWidget(upper_splitter, stretch=7)
         main_layout.addWidget(tools_group, stretch=3)
 
-    # --- LOGIC: Load & Filter ---
     def load_sensor_config(self):
         if os.path.exists(CONFIG_PATH):
             with open(CONFIG_PATH, 'r') as f:
                 self.sensor_config = json.load(f)
 
     def refresh_data_source(self):
-        """Called by MainWindow when a new log is opened."""
         self.df = self.main_window.df
         if self.df.empty: return
 
-        # Reset UI
         self.sensor_list.clear()
         self.plot_widget.clear()
         self.plot_curves = {}
@@ -168,7 +165,6 @@ class TimeSeriesVizTab(QWidget):
             signal for signal, info in self.sensor_config.items()
             if info['data_type'] in ['int', 'float'] and info['category'] != 'datetime'
         ]
-        print(f"valid_signals_cfg {valid_signals_cfg}")
         for col in self.df.columns:
             print(f"col {col}, col1 {col not in valid_signals_cfg}, col2 {self.df[col].nunique() <= 1}")
             if col not in valid_signals_cfg or self.df[col].nunique() <= 1:
@@ -180,47 +176,22 @@ class TimeSeriesVizTab(QWidget):
             item.setData(Qt.UserRole, col)
             self.sensor_list.addItem(item)
 
-    # --- LOGIC: Plotting ---
     def on_sensor_selection_change(self, item):
         col_name = item.data(Qt.UserRole)
-
         if item.checkState() == Qt.Checked:
             self.add_trace(col_name)
         else:
             self.remove_trace(col_name)
-
-        self.refresh_alerts()  # Re-draw alerts if signal changed
+        self.refresh_alerts()
 
     def add_trace(self, col_name):
         if col_name in self.plot_curves: return
-
-        # Get data
         y_data = self.df[col_name].values
-
-        # Determine Axis
-        # Left Axis is reserved for AFR (if available) or first item
         clean_name = col_name.strip()
 
         color = QColor.fromHsv(np.random.randint(0, 255), 255, 200)
-
-        if "AFR" in clean_name:
-            # Plot on Main Axis
-            curve = self.plot_widget.plot(self.x_data, y_data, pen=pg.mkPen(color, width=2), name=clean_name)
-            self.plot_curves[col_name] = curve
-        else:
-            # Create a ViewBox for multi-scale handling
-            # Note: For simplicity in this demo, we verify if we need a secondary axis
-            # A full unlimited-axis implementation is very complex in PyQtGraph.
-            # We will use the Main PlotItem for everything but normalize visual range
-            # OR create one secondary axis (Right) and map all non-AFR signals there.
-
-            # Implementation: Add to main plot, but let PyQtGraph Auto-Scale handle it
-            # Or use a separate ViewBox.
-            # For this "High Quality" request, we stick to the main view to ensure performance,
-            # but we color code the legend.
-
-            curve = self.plot_widget.plot(self.x_data, y_data, pen=pg.mkPen(color, width=2), name=clean_name)
-            self.plot_curves[col_name] = curve
+        curve = self.plot_widget.plot(self.x_data, y_data, pen=pg.mkPen(color, width=2), name=clean_name)
+        self.plot_curves[col_name] = curve
 
     def remove_trace(self, col_name):
         if col_name in self.plot_curves:
@@ -234,52 +205,45 @@ class TimeSeriesVizTab(QWidget):
         self.plot_curves = {}
 
     def mouse_moved(self, evt):
-        if self.playing: return  # Disable during animation
+        if self.playing: return
 
         pos = evt
         if self.plot_widget.sceneBoundingRect().contains(pos):
-            mousePoint = self.plot_widget.plotItem.vb.mapSceneToView(pos)
-            index = int(np.searchsorted(self.x_data, mousePoint.x()))
+            mouse_point = self.plot_widget.plotItem.vb.mapSceneToView(pos)
+            index = int(np.searchsorted(self.x_data, mouse_point.x()))
 
             if 0 <= index < len(self.x_data):
-                self.v_line.setPos(mousePoint.x())
-                self.h_line.setPos(mousePoint.y())
+                self.v_line.setPos(mouse_point.x())
+                self.h_line.setPos(mouse_point.y())
 
-                # Build Tooltip
                 text = f"Time: {self.x_data[index]:.2f}\n"
                 for col, curve in self.plot_curves.items():
                     val = self.df[col].values[index]
                     text += f"{col.strip()}: {val:.2f}\n"
 
                 self.label_hover.setText(text)
-                self.label_hover.setPos(mousePoint.x(), mousePoint.y())
+                self.label_hover.setPos(mouse_point.x(), mouse_point.y())
 
-    # --- LOGIC: Tools ---
     def save_trim(self):
         start = self.spin_trim_start.value()
         end = self.spin_trim_end.value()
 
-        # Mask
         mask = (self.x_data >= start) & (self.x_data <= end)
         trimmed_df = self.df[mask]
 
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getSaveFileName(self, "Save Trimmed Log", "", "CSV Files (*.csv)", options=options)
-        if fileName:
-            trimmed_df.to_csv(fileName, index=False)
+        file_name, _ = QFileDialog.getSaveFileName(self, "Save Trimmed Log", "", "CSV Files (*.csv)", options=options)
+        if file_name:
+            trimmed_df.to_csv(file_name, index=False)
             QMessageBox.information(self, "Success", "Trimmed log saved.")
 
     def apply_zoom(self):
         if self.playing or len(self.x_data) == 0: return
 
-        val = self.slider_zoom.value()  # 0 to 100
-
-        # Calculate range
+        val = self.slider_zoom.value()
         total_range = self.x_data[-1] - self.x_data[0]
         center = (self.x_data[-1] + self.x_data[0]) / 2
 
-        # Invert percentage to span
-        # 0% zoom = 100% span, 99% zoom = 1% span
         factor = (100 - val) / 100.0
         if factor < 0.01: factor = 0.01
 
@@ -290,7 +254,6 @@ class TimeSeriesVizTab(QWidget):
         self.plot_widget.setXRange(min_x, max_x, padding=0)
 
     def refresh_alerts(self):
-        # Remove old alerts
         if self.alert_scatter:
             self.plot_widget.removeItem(self.alert_scatter)
             self.alert_scatter = None
@@ -298,21 +261,16 @@ class TimeSeriesVizTab(QWidget):
         mode = self.bg_alerts.checkedButton().text()
         if mode == "NONE" or self.df.empty: return
 
-        points = []  # list of dicts {'pos': (x, y), 'brush': color}
-
-        # Identify Active Columns (only check plotted lines to save perf, or check all?)
-        # Prompt says "cross-check selected signals".
+        points = []
         active_cols = [k for k in self.plot_curves.keys()]
 
         for col in active_cols:
             clean_col = col.strip()
-            # Find config
             cfg = next((item for item in self.sensor_config if item["signal"] == clean_col), None)
             if not cfg: continue
 
             y_vals = self.df[col].values
 
-            # Check Critical
             if mode in ["CRITICAL", "ALL"] and cfg.get('critical'):
                 crit = cfg['critical']
                 mask = np.zeros(len(y_vals), dtype=bool)
@@ -325,7 +283,6 @@ class TimeSeriesVizTab(QWidget):
                     points.append({'pos': (self.x_data[idx], y_vals[idx]),
                                    'brush': pg.mkBrush('r'), 'symbol': 'o', 'size': 10})
 
-            # Check Warning
             if mode in ["WARNING", "ALL"] and cfg.get('warning'):
                 warn = cfg['warning']
                 mask = np.zeros(len(y_vals), dtype=bool)
@@ -334,7 +291,6 @@ class TimeSeriesVizTab(QWidget):
 
                 indices = np.where(mask)[0]
                 for idx in indices:
-                    # Don't overwrite criticals (simple logic: just add on top)
                     points.append({'pos': (self.x_data[idx], y_vals[idx]),
                                    'brush': pg.mkBrush(255, 165, 0), 'symbol': 't', 'size': 8})
 
@@ -342,7 +298,6 @@ class TimeSeriesVizTab(QWidget):
             self.alert_scatter = pg.ScatterPlotItem(points)
             self.plot_widget.addItem(self.alert_scatter)
 
-    # --- LOGIC: Animation ---
     def start_animation(self):
         if self.df.empty: return
         self.playing = True
@@ -350,7 +305,6 @@ class TimeSeriesVizTab(QWidget):
         self.btn_pause.setEnabled(True)
         self.btn_stop.setEnabled(True)
 
-        # Hide interactive elements
         self.v_line.hide()
         self.h_line.hide()
         self.label_hover.hide()
@@ -369,15 +323,12 @@ class TimeSeriesVizTab(QWidget):
         self.animation_index = 0
         self.btn_stop.setEnabled(False)
 
-        # Restore View
         self.plot_widget.enableAutoRange()
         self.v_line.show()
         self.h_line.show()
         self.label_hover.show()
 
     def update_timer_speed(self):
-        # Slider 5-15 -> 0.5x to 1.5x
-        # Base interval 50ms
         val = self.slider_speed.value() / 10.0
         interval = int(50 / val)
         self.timer.setInterval(interval)
@@ -386,19 +337,14 @@ class TimeSeriesVizTab(QWidget):
         if not self.playing: return
 
         window_width_indices = self.slider_window.value()
-
-        # Advance index
         self.animation_index += 1
         if self.animation_index >= len(self.x_data):
             self.stop_animation()
             return
 
-        # Calculate Window
         end_idx = self.animation_index
         start_idx = max(0, end_idx - window_width_indices)
-
         min_x = self.x_data[start_idx]
         max_x = self.x_data[end_idx]
 
-        # Update X Range to simulate sliding
         self.plot_widget.setXRange(min_x, max_x, padding=0)
