@@ -3,7 +3,7 @@ import json
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTableWidget,
                              QTableWidgetItem, QHeaderView, QSplitter, QComboBox,
                              QLabel, QGroupBox, QFormLayout, QLineEdit, QPushButton,
-                             QMessageBox, QFrame, QAbstractItemView)
+                             QMessageBox, QAbstractItemView)
 from PyQt5.QtCore import Qt
 from datalog_visualizer.config.constants import CONFIG_PATH, CONDITIONS_DICT
 
@@ -13,6 +13,7 @@ class DangerCfgTab(QWidget):
         super().__init__()
         self.main_window = main_window_ref
         self.sensor_data = []
+        self.selected_signal = None
 
         self.combo_filter = QComboBox()
         self.main_table = QTableWidget()
@@ -145,7 +146,6 @@ class DangerCfgTab(QWidget):
             self.main_table.setItem(row_idx, 3, QTableWidgetItem(str(entry['importance'])))
             self.main_table.setItem(row_idx, 4, QTableWidgetItem(str(entry['range'])))
 
-            # Simplified status for main table
             if len(entry["alerts"]) == 0:
                 warn_str = "No"
                 crit_str = "No"
@@ -168,10 +168,10 @@ class DangerCfgTab(QWidget):
     def on_row_selected(self):
         selected_items = self.main_table.selectedItems()
         if not selected_items:
+            self.selected_signal = None
             return
-        signal = self.main_table.item(selected_items[0].row(), 0).text()
-        print(f"Row selection changed! signal: {signal} selected_items {selected_items}")
-        self.refresh_alerts_table(self.sensor_data[signal])
+        self.selected_signal = self.main_table.item(selected_items[0].row(), 0).text()
+        self.refresh_alerts_table(self.sensor_data[self.selected_signal])
 
     def on_alert_row_selected(self):
         selected_items = self.table_alerts.selectedItems()
@@ -192,6 +192,7 @@ class DangerCfgTab(QWidget):
         self.inp_value.clear()
 
         alerts = sorted(entry['alerts'], key=lambda a: a['type'])
+
         self.table_alerts.setRowCount(len(alerts))
         for row, alert in enumerate(alerts):
             self.table_alerts.setItem(row, 0, QTableWidgetItem(str(alert['type'])))
@@ -212,20 +213,20 @@ class DangerCfgTab(QWidget):
             "value": parse_num(self.inp_value.text())
         }
 
-    def create_alert(self, signal):
-        if signal not in self.sensor_data.keys:
+    def create_alert(self):
+        if self.selected_signal not in self.sensor_data.keys():
             return
         data = self.get_input_data()
         if not data['value'] or data['value'] == '':
             QMessageBox.warning(self, "Warning", "value is required.")
             return
 
-        self.sensor_data[signal]['alerts'].append(data)
-        self.refresh_alerts_table(self.sensor_data[signal])
+        self.sensor_data[self.selected_signal]['alerts'].append(data)
+        self.refresh_alerts_table(self.sensor_data[self.selected_signal])
         self.main_window.edited = True
 
-    def update_alert(self, signal):
-        if signal not in self.sensor_data.keys:
+    def update_alert(self):
+        if self.selected_signal not in self.sensor_data.keys():
             return
         data = self.get_input_data()
         if not data['value'] or data['value'] == '':
@@ -233,14 +234,17 @@ class DangerCfgTab(QWidget):
             return
 
         idx = self.table_alerts.selectedItems()[0].row()
-        self.sensor_data[signal]['alerts'][idx] = data
-        self.refresh_alerts_table(self.sensor_data[signal])
+        self.sensor_data[self.selected_signal]['alerts'][idx] = data
+        self.refresh_alerts_table(self.sensor_data[self.selected_signal])
         self.main_window.edited = True
 
-    def delete_alert(self, signal):
+    def delete_alert(self):
+        if not self.table_alerts.selectedItems():
+            QMessageBox.warning(self, "Warning", "no alert selected for deletion.")
+            return
         idx = self.table_alerts.selectedItems()[0].row()
-        self.sensor_data[signal]['alerts'].pop(idx)
-        self.refresh_alerts_table(self.sensor_data[signal])
+        self.sensor_data[self.selected_signal]['alerts'].pop(idx)
+        self.refresh_alerts_table(self.sensor_data[self.selected_signal])
         self.main_window.edited = True
 
     def save_config(self):
@@ -248,3 +252,4 @@ class DangerCfgTab(QWidget):
             json.dump(self.sensor_data, f, indent=4)
         QMessageBox.information(self, "Success", "Configuration saved successfully.")
         self.main_window.edited = False
+        self.populate_main_table()
