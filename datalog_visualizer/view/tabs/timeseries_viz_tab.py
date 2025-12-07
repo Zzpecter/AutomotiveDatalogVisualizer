@@ -166,7 +166,6 @@ class TimeSeriesVizTab(QWidget):
             if info['data_type'] in ['int', 'float'] and info['category'] != 'datetime'
         ]
         for col in self.df.columns:
-            print(f"col {col}, col1 {col not in valid_signals_cfg}, col2 {self.df[col].nunique() <= 1}")
             if col not in valid_signals_cfg or self.df[col].nunique() <= 1:
                 continue
 
@@ -263,36 +262,52 @@ class TimeSeriesVizTab(QWidget):
 
         points = []
         active_cols = [k for k in self.plot_curves.keys()]
-
         for col in active_cols:
-            clean_col = col.strip()
-            cfg = next((item for item in self.sensor_config if item["signal"] == clean_col), None)
+            cfg = next((info for signal, info in self.sensor_config.items() if signal == col), None)
             if not cfg: continue
 
             y_vals = self.df[col].values
+            for alert in cfg['alerts']:
+                alert_type, condition, val = alert.values()
+                if mode in ["CRITICAL", "ALL"] and alert_type == 'CRITICAL':
+                    mask = np.zeros(len(y_vals), dtype=bool)
+                    if condition == 'eq':
+                        mask |= (y_vals == val)
+                    elif condition == 'neq':
+                        mask |= (y_vals != val)
+                    elif condition == 'lt':
+                        mask |= (y_vals < val)
+                    elif condition == 'lte':
+                        mask |= (y_vals <= val)
+                    elif condition == 'gte':
+                        mask |= (y_vals >= val)
+                    elif condition == 'gt':
+                        mask |= (y_vals > val)
 
-            if mode in ["CRITICAL", "ALL"] and cfg.get('critical'):
-                crit = cfg['critical']
-                mask = np.zeros(len(y_vals), dtype=bool)
-                if crit.get('min') is not None: mask |= (y_vals < crit['min'])
-                if crit.get('max') is not None: mask |= (y_vals > crit['max'])
-                if crit.get('value') is not None: mask |= (y_vals == crit['value'])
+                    indices = np.where(mask)[0]
+                    for idx in indices:
+                        points.append({'pos': (self.x_data[idx], y_vals[idx]),
+                                       'brush': pg.mkBrush('r'), 'symbol': 'o', 'size': 10})
 
-                indices = np.where(mask)[0]
-                for idx in indices:
-                    points.append({'pos': (self.x_data[idx], y_vals[idx]),
-                                   'brush': pg.mkBrush('r'), 'symbol': 'o', 'size': 10})
+                elif mode in ["WARNING", "ALL"] and alert_type == 'WARNING':
+                    mask = np.zeros(len(y_vals), dtype=bool)
+                    if condition == 'eq':
+                        mask |= (y_vals == val)
+                    elif condition == 'neq':
+                        mask |= (y_vals != val)
+                    elif condition == 'lt':
+                        mask |= (y_vals < val)
+                    elif condition == 'lte':
+                        mask |= (y_vals <= val)
+                    elif condition == 'gte':
+                        mask |= (y_vals >= val)
+                    elif condition == 'gt':
+                        mask |= (y_vals > val)
 
-            if mode in ["WARNING", "ALL"] and cfg.get('warning'):
-                warn = cfg['warning']
-                mask = np.zeros(len(y_vals), dtype=bool)
-                if warn.get('min') is not None: mask |= (y_vals < warn['min'])
-                if warn.get('max') is not None: mask |= (y_vals > warn['max'])
-
-                indices = np.where(mask)[0]
-                for idx in indices:
-                    points.append({'pos': (self.x_data[idx], y_vals[idx]),
-                                   'brush': pg.mkBrush(255, 165, 0), 'symbol': 't', 'size': 8})
+                    indices = np.where(mask)[0]
+                    for idx in indices:
+                        points.append({'pos': (self.x_data[idx], y_vals[idx]),
+                                       'brush': pg.mkBrush('y'), 'symbol': 't', 'size': 8})
 
         if points:
             self.alert_scatter = pg.ScatterPlotItem(points)
