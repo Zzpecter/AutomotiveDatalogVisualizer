@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import colors as mcolors
 
 from datalog_visualizer.config.constants import (
-    X_TICKS, Y_TICKS, TARGET_AFR_MAP, COL_COOLANT, COL_TPS,
+    X_TICKS, Y_TICKS, COL_COOLANT, COL_TPS,
     COL_RPM, COL_MAP, COL_AFR
 )
 
@@ -46,7 +46,6 @@ class DataProcessor:
             raw_map = row[COL_MAP]
             raw_afr = row[COL_AFR]
 
-            # Find indices of nearest grid points (Snapping)
             idx_x = (np.abs(self.np_x_ticks - raw_rpm)).argmin()
             idx_y = (np.abs(self.np_y_ticks - raw_map)).argmin()
 
@@ -57,7 +56,7 @@ class DataProcessor:
 
         return grid_data
 
-    def calculate_view_matrix(self, grid_data: dict, view_mode: str, filters: dict) -> tuple:
+    def calculate_view_matrix(self, grid_data: dict, view_mode: str, filters: dict, target_map: dict) -> tuple:
         value_matrix = np.full(self.matrix_shape, np.nan)
         text_matrix = np.full(self.matrix_shape, "", dtype=object)
 
@@ -75,32 +74,28 @@ class DataProcessor:
                 val_to_plot = avg_afr
                 text_to_show = f"{avg_afr:.1f}"
                 title = f"Average AFR ({filters['temp']}, {filters['tps']})"
-                cmap = 'jet'
+                cmap = 'RdBu_r'
                 clabel = "AFR"
 
             elif view_mode == 'hits':
                 val_to_plot = len(afr_list)
                 text_to_show = str(val_to_plot)
                 title = f"Hit Count ({filters['temp']}, {filters['tps']})"
-                cmap = 'viridis'
+                cmap = 'jet'
                 clabel = "Samples"
 
             elif view_mode == 'dev':
                 grid_rpm_val = X_TICKS[idx_x]
                 grid_map_val = Y_TICKS[idx_y]
-                print(f"grid_rpm_val {grid_rpm_val}")
-                print(f"grid_map_val {grid_map_val}")
-                # Fetch target and calculate difference
-                target = TARGET_AFR_MAP[idx_x][idx_y]
+                target = target_map.get((grid_rpm_val, grid_map_val), 13.6)
                 diff = avg_afr - target
 
                 val_to_plot = diff
                 text_to_show = f"{diff:+.1f}"
                 title = f"Deviation (Actual - Target) ({filters['temp']}, {filters['tps']})"
-                cmap = 'bwr'
+                cmap = 'coolwarm'
                 clabel = "Error (AFR)"
-                # Center the colormap around 0 for deviation
-                norm = mcolors.TwoSlopeNorm(vmin=-1.5, vcenter=0, vmax=1.5)
+                norm = mcolors.TwoSlopeNorm(vmin=-5, vcenter=0, vmax=5)
 
             value_matrix[idx_y, idx_x] = val_to_plot
             text_matrix[idx_y, idx_x] = text_to_show
