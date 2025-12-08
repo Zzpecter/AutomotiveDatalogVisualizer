@@ -9,6 +9,7 @@ from datalog_visualizer.config.constants import TARGET_AFR_JSON_PATH
 from datalog_visualizer.view.tabs.visualizer_tab import VisualizerTab
 from datalog_visualizer.view.tabs.target_map_tab import TargetMapTab
 from datalog_visualizer.view.tabs.danger_cfg_tab import DangerCfgTab
+from datalog_visualizer.view.tabs.timeseries_viz_tab import TimeSeriesVizTab
 
 
 class MainWindow(QMainWindow):
@@ -24,6 +25,7 @@ class MainWindow(QMainWindow):
         self.tab_visualizer = VisualizerTab(self)
         self.tab_targets = TargetMapTab(self)
         self.tab_danger = DangerCfgTab(self)
+        self.tab_time = TimeSeriesVizTab(self)
 
         self.tabs.tabBar().installEventFilter(self)
         self.previous_index = self.tabs.currentIndex()
@@ -65,6 +67,7 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.tab_visualizer, "AFR Visualizer")
         self.tabs.addTab(self.tab_targets, "AFR Target Map")
         self.tabs.addTab(self.tab_danger, "Danger Detection Cfg.")
+        self.tabs.addTab(self.tab_time, "Time-Series Viz")
 
     def eventFilter(self, source, event):
         if event.type() == QEvent.Type.MouseButtonPress and source == self.tabs.tabBar():
@@ -98,11 +101,13 @@ class MainWindow(QMainWindow):
                 self.df = pd.read_csv(file_name)
                 base_name = os.path.basename(file_name)
                 self.tab_visualizer.update_status_label(base_name, len(self.df))
+                self.tab_time.refresh_data_source()
 
                 QMessageBox.information(self, "Success", f"Loaded {len(self.df)} rows.")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Could not load file: {e}")
                 self.tab_visualizer.update_status_label(None)
+                raise e
 
     def save_current_plot(self):
         self.tab_visualizer.canvas.figure.savefig("plot_output.png")
