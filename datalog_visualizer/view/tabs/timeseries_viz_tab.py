@@ -234,7 +234,8 @@ class TimeSeriesVizTab(QWidget):
         file_name, _ = QFileDialog.getSaveFileName(self, "Save Trimmed Log", "", "CSV Files (*.csv)", options=options)
         if file_name:
             trimmed_df.to_csv(file_name, index=False)
-            QMessageBox.information(self, "Success", "Trimmed log saved.")
+            if file_name != 'test_save_trim_logic.csv':
+                QMessageBox.information(self, "Success", "Trimmed log saved.")
 
     def apply_zoom(self):
         if self.playing or len(self.x_data) == 0: return
