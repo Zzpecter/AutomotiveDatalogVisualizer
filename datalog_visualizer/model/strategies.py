@@ -6,8 +6,8 @@ from datalog_visualizer.config.constants import X_TICKS, Y_TICKS
 
 class MatrixStrategy(ABC):
     def __init__(self):
-        # self.title = "Abstract Strategy"
-        # self.cmap = 'gray'
+        self.title = "Abstract Strategy"
+        self.cmap = 'gray'
         self.norm = None
         self.val_matrix = np.full((16, 16), np.nan)
         self.txt_matrix = [["" for _ in range(16)] for _ in range(16)]
@@ -28,7 +28,7 @@ class AFRAverageStrategy(MatrixStrategy):
         for (x, y), values in grid_data.items():
             avg = np.mean(values)
             self.val_matrix[y, x] = avg
-            self.txt_matrix[y, x] = f"{avg:.1f}"
+            self.txt_matrix[y][x] = f"{avg:.1f}"
         return self.val_matrix, self.txt_matrix, self.title, self.cmap, self.norm, self.clabel
 
 
@@ -40,13 +40,10 @@ class HitsStrategy(MatrixStrategy):
         self.clabel = "Samples"
 
     def calculate(self, grid_data, target_map=None):
-        val_matrix = np.zeros((16, 16))
-        txt_matrix = [["" for _ in range(16)] for _ in range(16)]
-
         for (x, y), values in grid_data.items():
             count = len(values)
-            val_matrix[y, x] = count
-            txt_matrix[y, x] = str(count)
+            self.val_matrix[y, x] = count
+            self.txt_matrix[y][x] = str(count)
         return self.val_matrix, self.txt_matrix, self.title, self.cmap, self.norm, self.clabel
 
 
@@ -65,5 +62,5 @@ class DeviationStrategy(MatrixStrategy):
             if target:
                 dev = np.mean(values) - target
                 self.val_matrix[y, x] = dev
-                self.txt_matrix[y, x] = f"{dev:+.1f}"
+                self.txt_matrix[y][x] = f"{dev:+.1f}"
         return self.val_matrix, self.txt_matrix, self.title, self.cmap, self.norm, self.clabel

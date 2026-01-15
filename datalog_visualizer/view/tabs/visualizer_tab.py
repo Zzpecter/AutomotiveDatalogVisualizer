@@ -16,15 +16,15 @@ class VisualizerTab(QWidget):
         self.main_window = main_window_ref
         self.processor = DataProcessor()
 
-        self.strategies = {
+        self.matrix_strategies = {
             "Avg AFR": AFRAverageStrategy(),
             "Hit Count": HitsStrategy(),
             "Deviation": DeviationStrategy()
         }
 
         self.status_label = QLabel()
-        self.combo_temp = create_combo_box("Temp:", ["ALL", "WARM", "COLD"], controls_layout)
-        self.combo_tps = create_combo_box("TPS:", ["ALL", "CLOSED", ">0%", "WOT"], controls_layout)
+        self.combo_temp = QComboBox()
+        self.combo_tps = QComboBox()
         self.radio_afr = QRadioButton("Avg AFR")
         self.radio_afr.setChecked(True)
         self.radio_hits = QRadioButton("Hit Count")
@@ -48,6 +48,9 @@ class VisualizerTab(QWidget):
         self.view_group.addButton(self.radio_afr)
         self.view_group.addButton(self.radio_hits)
         self.view_group.addButton(self.radio_dev)
+
+        self.combo_temp = create_combo_box("Temp:", ["ALL", "WARM", "COLD"], controls_layout)
+        self.combo_tps = create_combo_box("TPS:", ["ALL", "CLOSED", ">0%", "WOT"], controls_layout)
 
         controls_layout.addWidget(lbl_view)
         controls_layout.addWidget(self.radio_afr)
@@ -75,8 +78,7 @@ class VisualizerTab(QWidget):
             QMessageBox.information(self, "Info", "No data matches current filters.")
             self.canvas.draw_empty_grid()
             return
-
-        val_matrix, txt_matrix, title, cmap, norm, clabel = self.main_window.data_processor.calculate_view_matrix(
+        val_matrix, txt_matrix, title, cmap, norm, clabel = self.processor.calculate_view_matrix(
             self.processor.process_to_grid(filtered_df),
             self.matrix_strategies[self.view_group.checkedButton().text()],
             self.main_window.get_target_map()

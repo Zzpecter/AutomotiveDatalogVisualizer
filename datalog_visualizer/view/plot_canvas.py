@@ -54,7 +54,7 @@ class PlotCanvas(FigureCanvas):
         matrix_shape = value_matrix.shape
         for y in range(matrix_shape[0]):
             for x in range(matrix_shape[1]):
-                txt = text_matrix[y, x]
+                txt = text_matrix[y][x]
                 val = value_matrix[y, x]
 
                 if txt != "":
