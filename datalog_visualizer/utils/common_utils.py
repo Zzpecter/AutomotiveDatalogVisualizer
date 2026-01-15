@@ -1,7 +1,3 @@
-def safe_divide(numerator, denominator, fallback=0.0):
-    return numerator / denominator if denominator != 0 else fallback
-
-
 def unit_converter(value, unit_from, unit_to):
     conversions = {
         ('C', 'F'): lambda v: (v * 9 / 5) + 32,

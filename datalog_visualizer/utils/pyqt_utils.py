@@ -1,12 +1,4 @@
-from PyQt5.QtWidgets import QMessageBox, QLabel, QComboBox
-
-
-def show_message(parent, title, message, icon=QMessageBox.Information):
-    msg = QMessageBox(parent)
-    msg.setWindowTitle(title)
-    msg.setText(message)
-    msg.setIcon(icon)
-    msg.exec_()
+from PyQt5.QtWidgets import QLabel, QComboBox
 
 
 def create_combo_box(label_text, items, layout, width=80):

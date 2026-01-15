@@ -5,7 +5,6 @@ from datalog_visualizer.config.constants import (
     X_TICKS, Y_TICKS, COL_COOLANT, COL_TPS,
     COL_RPM, COL_MAP, COL_AFR
 )
-from datalog_visualizer.model.strategies import MatrixStrategy
 
 
 class DataProcessor:
@@ -55,9 +54,3 @@ class DataProcessor:
             grid_data[key].append(raw_afr)
 
         return grid_data
-
-    def calculate_view_matrix(self, grid_data: dict, strategy: MatrixStrategy, target_map: dict) -> tuple:
-        if not isinstance(strategy, MatrixStrategy):
-            raise ValueError("Invalid calculation strategy provided.")
-
-        return strategy.calculate(grid_data, target_map)

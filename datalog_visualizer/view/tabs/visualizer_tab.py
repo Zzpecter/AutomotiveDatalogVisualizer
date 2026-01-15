@@ -4,10 +4,8 @@ from PyQt5.QtCore import Qt
 
 from datalog_visualizer.view.plot_canvas import PlotCanvas
 from datalog_visualizer.model.data_processor import DataProcessor
-from datalog_visualizer.model.strategies import (
-    AFRAverageStrategy, HitsStrategy, DeviationStrategy
-)
 from datalog_visualizer.utils.pyqt_utils import create_combo_box
+from datalog_visualizer.config.constants import VE_VIZ_STRATEGIES
 
 
 class VisualizerTab(QWidget):
@@ -15,12 +13,6 @@ class VisualizerTab(QWidget):
         super().__init__()
         self.main_window = main_window_ref
         self.processor = DataProcessor()
-
-        self.matrix_strategies = {
-            "Avg AFR": AFRAverageStrategy(),
-            "Hit Count": HitsStrategy(),
-            "Deviation": DeviationStrategy()
-        }
 
         self.status_label = QLabel()
         self.combo_temp = QComboBox()
@@ -70,21 +62,25 @@ class VisualizerTab(QWidget):
     def populate_table(self):
         df = self.main_window.df
         if df.empty:
-            QMessageBox.information(self, "Info", "Please OPEN LOG first.")
+            QMessageBox.warning(self,
+                                "Empty Dataset",
+                                "Please OPEN A LOG FILE first.\n"
+                                "Hint: click on 'FILE' in the menu bar at the top and then on 'OPEN LOG'")
             return
 
-        filtered_df = self.processor.apply_filters(df, self.combo_temp.currentText(), self.combo_tps.currentText())
-        if filtered_df.empty:
-            QMessageBox.information(self, "Info", "No data matches current filters.")
+        df = self.processor.apply_filters(df, self.combo_temp.currentText(), self.combo_tps.currentText())
+        if df.empty:
+            QMessageBox.warning(self, "Empty Dataset!",
+                                "No data matches current filters or log file is empty.")
             self.canvas.draw_empty_grid()
             return
-        val_matrix, txt_matrix, title, cmap, norm, clabel = self.processor.calculate_view_matrix(
-            self.processor.process_to_grid(filtered_df),
-            self.matrix_strategies[self.view_group.checkedButton().text()],
-            self.main_window.get_target_map()
-        )
 
-        self.canvas.draw_heatmap(val_matrix, txt_matrix, title, cmap, norm, clabel)
+        strategy = VE_VIZ_STRATEGIES[self.view_group.checkedButton().text()]
+        vals, txts, title, cmap, norm, clabel = strategy.calculate(
+            self.processor.process_to_grid(df),
+            self.main_window.get_target_map())
+
+        self.canvas.draw_heatmap(vals, txts, title, cmap, norm, clabel)
 
     def update_status_label(self, file_name=None, row_count=None):
         if file_name and row_count is not None:

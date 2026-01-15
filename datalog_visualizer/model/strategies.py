@@ -4,7 +4,7 @@ from matplotlib import colors as mcolors
 from datalog_visualizer.config.constants import X_TICKS, Y_TICKS
 
 
-class MatrixStrategy(ABC):
+class BaseVEVizStrategy(ABC):
     def __init__(self):
         self.title = "Abstract Strategy"
         self.cmap = 'gray'
@@ -17,7 +17,7 @@ class MatrixStrategy(ABC):
         pass
 
 
-class AFRAverageStrategy(MatrixStrategy):
+class AFRAverageStrategy(BaseVEVizStrategy):
     def __init__(self):
         super().__init__()
         self.title = "Average AFR Map"
@@ -32,7 +32,7 @@ class AFRAverageStrategy(MatrixStrategy):
         return self.val_matrix, self.txt_matrix, self.title, self.cmap, self.norm, self.clabel
 
 
-class HitsStrategy(MatrixStrategy):
+class HitsStrategy(BaseVEVizStrategy):
     def __init__(self):
         super().__init__()
         self.title = "Hit Count Map"
@@ -47,7 +47,7 @@ class HitsStrategy(MatrixStrategy):
         return self.val_matrix, self.txt_matrix, self.title, self.cmap, self.norm, self.clabel
 
 
-class DeviationStrategy(MatrixStrategy):
+class DeviationStrategy(BaseVEVizStrategy):
     def __init__(self):
         super().__init__()
         self.title = "AFR Deviation (Actual Avg. - Target)"
