@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from matplotlib import colors as mcolors
 
 from datalog_visualizer.config.constants import (
     X_TICKS, Y_TICKS, COL_COOLANT, COL_TPS,
@@ -55,49 +54,3 @@ class DataProcessor:
             grid_data[key].append(raw_afr)
 
         return grid_data
-
-    def calculate_view_matrix(self, grid_data: dict, view_mode: str, filters: dict, target_map: dict) -> tuple:
-        value_matrix = np.full(self.matrix_shape, np.nan)
-        text_matrix = np.full(self.matrix_shape, "", dtype=object)
-
-        norm = None
-        cmap = 'jet'
-        title = f"Data ({filters['temp']}, {filters['tps']})"
-        clabel = ""
-
-        for (idx_x, idx_y), afr_list in grid_data.items():
-            avg_afr = sum(afr_list) / len(afr_list)
-            val_to_plot = np.nan
-            text_to_show = ""
-
-            if view_mode == 'afr':
-                val_to_plot = avg_afr
-                text_to_show = f"{avg_afr:.1f}"
-                title = f"Average AFR ({filters['temp']}, {filters['tps']})"
-                cmap = 'RdBu_r'
-                clabel = "AFR"
-
-            elif view_mode == 'hits':
-                val_to_plot = len(afr_list)
-                text_to_show = str(val_to_plot)
-                title = f"Hit Count ({filters['temp']}, {filters['tps']})"
-                cmap = 'jet'
-                clabel = "Samples"
-
-            elif view_mode == 'dev':
-                grid_rpm_val = X_TICKS[idx_x]
-                grid_map_val = Y_TICKS[idx_y]
-                target = target_map.get((grid_rpm_val, grid_map_val), 13.6)
-                diff = avg_afr - target
-
-                val_to_plot = diff
-                text_to_show = f"{diff:+.1f}"
-                title = f"Deviation (Actual - Target) ({filters['temp']}, {filters['tps']})"
-                cmap = 'coolwarm'
-                clabel = "Error (AFR)"
-                norm = mcolors.TwoSlopeNorm(vmin=-5, vcenter=0, vmax=5)
-
-            value_matrix[idx_y, idx_x] = val_to_plot
-            text_matrix[idx_y, idx_x] = text_to_show
-
-        return value_matrix, text_matrix, title, cmap, norm, clabel

@@ -1,5 +1,6 @@
 import os
 
+
 COL_RPM = ' RPM'
 COL_MAP = ' MAP'
 COL_AFR = ' Int. WB AFR'
@@ -22,3 +23,13 @@ conditions_fwd = {
 }
 conditions_bwd = {v: k for k, v in conditions_fwd.items()}
 CONDITIONS_DICT = {**conditions_fwd, **conditions_bwd}
+
+
+import datalog_visualizer.model.strategies as strategy
+
+
+VE_VIZ_STRATEGIES = {
+    "Avg AFR": strategy.AFRAverageStrategy(),
+    "Hit Count": strategy.HitsStrategy(),
+    "Deviation": strategy.DeviationStrategy()
+}
