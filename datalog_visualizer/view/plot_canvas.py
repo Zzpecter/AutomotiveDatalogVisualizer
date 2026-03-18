@@ -1,6 +1,7 @@
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
+import matplotlib.ticker as mticker
 
 from datalog_visualizer.config.constants import X_TICKS, Y_TICKS
 
@@ -14,8 +15,11 @@ class PlotCanvas(FigureCanvas):
         self.draw_empty_grid()
 
     def configure_axes(self):
-        self.ax.set_xticks(np.arange(len(X_TICKS)))
-        self.ax.set_yticks(np.arange(len(Y_TICKS)))
+
+        self.ax.xaxis.set_major_locator(mticker.FixedLocator(np.arange(len(X_TICKS))))
+        self.ax.yaxis.set_major_locator(mticker.FixedLocator(np.arange(len(Y_TICKS))))
+        # self.ax.set_xticks(np.arange(len(X_TICKS)))
+        # self.ax.set_yticks(np.arange(len(Y_TICKS)))
         self.ax.set_xticklabels(X_TICKS, rotation=45, ha='left')
         self.ax.set_yticklabels(Y_TICKS)
         self.ax.xaxis.tick_top()
